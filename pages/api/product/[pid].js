@@ -1,7 +1,7 @@
 import Product from '../../../models/Product'
-import initDb from '../../../helpers/initDB'
+import initDB from '../../../helpers/initDB'
 
-initDb()
+initDB()
 
 export default async (req,res)=>{
    switch (req.method) {

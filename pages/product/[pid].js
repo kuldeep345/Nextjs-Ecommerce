@@ -2,7 +2,8 @@ import baseUrl from "../../helpers/baseUrl"
 import {AiFillDelete} from 'react-icons/ai'
 import React from 'react';
 import Modal from 'react-modal';
-import router from 'next/router'
+import router from 'next/router' 
+import {parseCookies} from 'nookies'
 
 const customStyles = {
     content: {
@@ -18,6 +19,8 @@ const customStyles = {
 
 
 const Product = ({ product }) => {
+
+      const {role} = parseCookies()
 
     let subtitle;
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -72,9 +75,9 @@ const Product = ({ product }) => {
         <section className=" text-gray-600 body-font overflow-hidden">
             <div className=" container px-5 py-12 mx-auto ">
                 <div className=" relative lg:w-4/5 mx-auto flex flex-wrap bg-white px-6 py-8 lg:py-4 lg:pr-40 rounded-md shadow-xl">
-            <AiFillDelete className="absolute top-4 right-6 text-3xl text-red-600 cursor-pointer hover:scale-110" onClick={openModal}/>
+           {role != 'user' && <AiFillDelete className="absolute top-4 right-6 text-3xl text-red-600 cursor-pointer hover:scale-110" onClick={openModal}/>}
                     <div alt="ecommerce" className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded flex justify-center items-center" >
-                        <img src={product?.mediaUrl} style={{ height: "inherit" }} />
+                        <img src={product?.mediaUrl} className="mb-3" style={{ height: "inherit" }} />
                     </div>
                     <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
 

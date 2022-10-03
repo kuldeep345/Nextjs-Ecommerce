@@ -1,7 +1,8 @@
-import React , {useState} from 'react'
+import React , {useState,useEffect} from 'react'
 import {HiPaperAirplane} from 'react-icons/hi'
 import baseUrl from '../helpers/baseUrl'
 import {  toast } from 'react-toastify';
+import {parseCookies} from 'nookies'
 
 
 const create = () => {
@@ -13,6 +14,17 @@ const create = () => {
         description:""
     })
 
+    useEffect(() => {
+      setValues({
+        name:"",
+        price:"",
+        description:""
+      })
+
+      setMedia(null)
+    }, [])
+    
+
     const handleOnChange = (e)=>{
         setValues({
             ...values,
@@ -21,8 +33,8 @@ const create = () => {
     }
 
     const handleSubmit = async(e)=>{
-      imageUpload()
-        e.preventDefault()
+      e.preventDefault()
+      const mediaUrl = await imageUpload()
        const res = await fetch(`${baseUrl}/api/products`,{
         method:"POST",
         headers:{
@@ -31,17 +43,37 @@ const create = () => {
         body:JSON.stringify({
           name:values.name,
           price:values.price,
-          mediaUrl:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8bGFwdG9wfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+          mediaUrl,
           description:values.description
         })
        })
        const res2 = await res.json()
        if(res2.error){
-        toast(res2.error);
+        toast.error(res2.error);
        }
        else{
-        toast(res2.message);
+        toast.success(res2.message);
+        setValues({
+          name:"",
+          price:"",
+          description:""
+      })
        }
+    }
+
+
+    const imageUpload = async(req,res)=>{
+      const data = new FormData()
+      data.append('file' , media)
+      data.append('upload_preset', 'Ecommerce')
+      data.append('cloud_name','cdf')
+      const res1 = await fetch('https://api.cloudinary.com/v1_1/cdf/image/upload',{
+        method:'POST',
+        body:data
+      })
+
+      const res2 = await res1.json()
+      return res2.url
     }
 
   return (
@@ -87,5 +119,21 @@ const create = () => {
     </div>
   )
 }
+
+export async function getServerSideProps(ctx){
+  const {name ,role , email} = await parseCookies(ctx)
+  console.log(name ,role , email)
+  if(role!='admin'){
+    const {res} = ctx
+    res.writeHead(302,{Location:"/login"})
+    res.end()
+  }
+
+  return {
+    props:{}
+  }
+}
+
+
 
 export default create

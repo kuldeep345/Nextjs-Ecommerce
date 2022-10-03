@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
   return <>
     <ToastContainer
       position="top-right"
-      autoClose={5000}
+      autoClose={2000}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick
@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }) {
       draggable
       pauseOnHover
     />
-    <ToastContainer />
+   
     <Navbar />
     <Component {...pageProps} />
   </>
