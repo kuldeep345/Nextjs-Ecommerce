@@ -50,7 +50,7 @@ const Navbar = () => {
                 )
             }
                 <Link href="/cart">
-                    <BsFillCartCheckFill color='white' fontSize='20px' className="ml-8"/>
+                    <BsFillCartCheckFill color='white' fontSize='20px' className="ml-8 cursor-pointer"/>
                 </Link>
 
                 </nav >
