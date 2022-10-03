@@ -1,9 +1,11 @@
 import baseUrl from "../../helpers/baseUrl"
 import {AiFillDelete} from 'react-icons/ai'
-import React from 'react';
+import React,{useState} from 'react';
 import Modal from 'react-modal';
 import router from 'next/router' 
 import {parseCookies} from 'nookies'
+import { toast } from "react-toastify";
+import cookie from 'js-cookie'
 
 const customStyles = {
     content: {
@@ -20,7 +22,10 @@ const customStyles = {
 
 const Product = ({ product }) => {
 
-      const {role} = parseCookies()
+      const {role,token} = parseCookies()
+
+      const [quantity, setQuanitiy] = useState(1)
+      console.log(quantity)
 
     let subtitle;
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -38,13 +43,44 @@ const Product = ({ product }) => {
     }
 
     const deleteProduct = async (req,res)=>{
-        console.log("fuck")
         const res1 = await fetch(`${baseUrl}/api/product/${product._id}`,{
             method:"DELETE"
         })
         await res1.json()
         await closeModal()
         await router.push("/")
+    }
+
+
+    const AddToCart = async(req,res)=>{
+     const res1 = await fetch(`${baseUrl}/api/cart`,{
+        method:"PUT",
+        headers:{
+          'Content-Type':'application/json',
+          "token":token
+        },
+        body:JSON.stringify({
+            quantity,
+            productId:product._id
+        })
+      })
+
+      const res2 = await res1.json()
+
+      
+    if(res2.error){
+      toast.error(error)
+      cookie.remove('token')
+      cookie.remove('name')
+      cookie.remove('email')
+      cookie.remove('role')
+      router.push('/login')
+
+  }
+     if(res2.message){
+      toast.success(res2.message)
+     } 
+
     }
 
 
@@ -84,13 +120,19 @@ const Product = ({ product }) => {
                         <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">{product?.name}</h1>
 
                         <p className="leading-relaxed mt-3">{product?.description}</p>
-                        <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
-
-
+                        <div className="flex mt-6 items-center justify-end pb-5 border-b-2 border-gray-100 mb-5">
+                          <div className="flex items-end justify-center gap-2">
+                            <span>Quantity :</span>
+                        <input type="number" className="w-20 border-2 border-purple-300 border-md px-1 focus:outline-none" min="1" defaultValue="1" value={quantity} onChange={(e)=>setQuanitiy(e.target.value)}/>
+                          </div>
                         </div>
                         <div className="flex">
                             <span className="title-font font-medium text-2xl text-gray-900">${product?.price}</span>
-                            <button className="flex ml-auto text-white bg-purple-700 border-0 py-1.5 px-3 focus:outline-none hover:bg-purple-800 rounded">AddtoCart</button>
+                           {role ? (
+                           <button className="flex ml-auto text-white bg-purple-700 border-0 py-1.5 px-3 focus:outline-none hover:bg-purple-800 rounded" onClick={AddToCart}>AddtoCart</button>
+                           ):(
+                            <button className="flex ml-auto text-white bg-purple-700 border-0 py-1.5 px-3 focus:outline-none hover:bg-purple-800 rounded" onClick={()=>router.push('/login')} >Login to Add</button>
+                           )}
 
                         </div>
                     </div>
