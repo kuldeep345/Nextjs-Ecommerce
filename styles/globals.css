@@ -5,6 +5,6 @@
 
 @layer base{
     body{
-        @apply bg-purple-200
+        @apply scrollbar-thin scrollbar-thumb-purple-700 scrollbar-track-purple-300 h-32 overflow-y-scroll  bg-purple-200
     }
 }

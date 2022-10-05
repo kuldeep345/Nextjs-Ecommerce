@@ -8,7 +8,7 @@ const ProductCard = ({id ,name, mediaUrl, price ,description}) => {
    <Link href={`/product/${id}`}>
       <div className="mx-6 md:mx-0 py-4 md:w-3/4 lg:w-2/4 xl:w-1/4 bg-white shadow-purple-400 shadow-md rounded-lg cursor-pointer">
         <div className="h-full rounded-lg overflow-hidden">
-          <img className="h-[18rem] lg:h-52 md:h-40 w-full object-contain object-cente pt-4" src={mediaUrl} alt="blog"/>
+          <img className="h-[18rem] lg:h-64 md:h-40 w-full object-contain object-cente pt-4" src={mediaUrl} alt="blog"/>
           <div className="p-1">
             <h2 className="tracking-normal text-lg title-font font-medium text-gray-900 mb-1">{name}</h2>
             <h1 className="title-font text-lg font-medium text-gray-900 mb-3">${price}</h1>

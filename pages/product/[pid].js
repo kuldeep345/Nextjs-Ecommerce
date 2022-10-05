@@ -123,7 +123,8 @@ const Product = ({ product }) => {
                         <div className="flex mt-6 items-center justify-end pb-5 border-b-2 border-gray-100 mb-5">
                           <div className="flex items-end justify-center gap-2">
                             <span>Quantity :</span>
-                        <input type="number" className="w-20 border-2 border-purple-300 border-md px-1 focus:outline-none" min="1" defaultValue="1" value={quantity} onChange={(e)=>setQuanitiy(e.target.value)}/>
+                        <input type="number" className="w-20 border-2 border-purple-300 border-md px-1 focus:outline-none" min="1" 
+                         value={quantity} onChange={(e)=>setQuanitiy(e.target.value)}/>
                           </div>
                         </div>
                         <div className="flex">

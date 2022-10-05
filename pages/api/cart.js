@@ -1,24 +1,32 @@
 import jwt from 'jsonwebtoken'
 import Cart from '../../models/Cart'
+import initDB from '../../helpers/initDB'
 
+
+initDB()
 
 export default async(req,res)=>{
-  switch (req.method) {
-    case "GET":
-        await fetchProducts(req,res)
-        break;
-    case "PUT":
-        await addProduct(req,res)
-  }
-
-}
-
-function isAuthenticated(icomponent){
+    switch (req.method) {
+        case "GET":
+            await fetchProducts(req,res)
+            break;
+        case "PUT":
+            await addProduct(req,res)
+            break
+        case "DELETE":
+            await removeProduct(req,res)
+            break
+            }
+                
+            }
+            
+ function isAuthenticated(icomponent){
+  
     return (req,res)=>{
         const {token} = req.headers
-
+        
         if(!token){
-            return res.status(401).json({error:"You must be logged in"})
+            return res.status(401).json({error:"You must be logged in "})
         }
 
         try{
@@ -36,7 +44,7 @@ function isAuthenticated(icomponent){
 
 const fetchProducts = isAuthenticated(async(req,res)=>{
    
-        const cart = await Cart.findOne({user:req.userId})
+        const cart = await Cart.findOne({user:req.userId}).populate("products.product")
         res.status(200).json(cart.products)
 
 })
@@ -61,4 +69,16 @@ const addProduct = isAuthenticated(async(req,res)=>{
 
    res.status(200).json({message:"Product added to cart"})
 
+})
+
+
+const removeProduct = isAuthenticated(async(req,res)=>{
+    const {productId} = req.body
+    console.log(req.userId)
+   const cart = await Cart.findOneAndUpdate(
+    {user:req.userId},
+    {$pull:{products:{product:productId}}},
+    {new:true}
+    ).populate("products.product")
+    res.status(200).json(cart.products)
 })
