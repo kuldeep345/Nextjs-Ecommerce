@@ -1,4 +1,4 @@
-import initDB from "../../helpers/initDb"
+import initDB from "../../helpers/initDB"
 import Product from '../../models/Product'
 
 initDB()
