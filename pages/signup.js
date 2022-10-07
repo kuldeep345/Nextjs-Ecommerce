@@ -4,7 +4,7 @@ import baseUrl from '../helpers/baseUrl'
 import {useRouter} from 'next/router'
 import {  toast } from 'react-toastify';
 
-const signup = () => {
+const Signup = () => {
 
     const router = useRouter()
 
@@ -90,4 +90,4 @@ const signup = () => {
   )
 }
 
-export default signup
+export default Signup

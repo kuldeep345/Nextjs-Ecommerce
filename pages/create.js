@@ -5,7 +5,7 @@ import {  toast } from 'react-toastify';
 import {parseCookies} from 'nookies'
 
 
-const create = () => {
+const Create = () => {
     const [media, setMedia] = useState(null)
 
     const [values , setValues] = useState({
@@ -136,4 +136,4 @@ export async function getServerSideProps(ctx){
 
 
 
-export default create
+export default Create
