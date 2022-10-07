@@ -6,11 +6,12 @@ import { useRouter } from 'next/router'
 import { AiFillDelete } from 'react-icons/ai'
 import Link from 'next/link'
 import { useState } from 'react'
+import StripeCheckout from 'react-stripe-checkout';
 
 const Cart = ({ error, products }) => {
 
 
-   
+
     const router = useRouter()
     const { token } = parseCookies()
     if (!token && error) {
@@ -36,82 +37,113 @@ const Cart = ({ error, products }) => {
         router.push('/login')
     }
 
-    
-    
 
-  
+
+
+
 
 
     const CartItems = () => {
 
         const [cartProducts, setCartProducts] = useState(products)
-        // console.log(cartProducts)
+        console.log(cartProducts.length)
 
         const totalqty = cartProducts.reduce((prev, curr) => prev + curr.quantity, 0
-    )
+        )
 
-    const totalprice = cartProducts.reduce((prev, curr) => prev + curr.product.price, 0
-    )
+        const totalprice = cartProducts.reduce((prev, curr) => prev + curr.product.price, 0
+        )
 
 
-        const handleRemove = async(pid)=>{
-            const res2 = await fetch(`${baseUrl}/api/cart`,{
-                method:'DELETE',
-                headers:{
-                    'Content-type':'application/json',
-                    'token':token
+        const handleRemove = async (pid) => {
+            const res2 = await fetch(`${baseUrl}/api/cart`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-type': 'application/json',
+                    'token': token
                 },
-                body:JSON.stringify({
-                    productId:pid
+                body: JSON.stringify({
+                    productId: pid
                 })
             })
             const response = await res2.json()
-          
+
             setCartProducts(response)
+        }
+
+        const handleCheckout = async (paymentInfo) => {
+            console.log(paymentInfo)
+            const res = await fetch(`${baseUrl}/api/payment`, {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json',
+                    'token': token
+                },
+                body: JSON.stringify({
+                    paymentInfo
+                })
+            })
+
+            const res2 = await res.json()
+            console.log(res2)
+        }
+
+        if (cartProducts.length === 0 ) {
+            return (
+                <div className='flex flex-col items-center justify-center gap-2'>
+                    <h2>No Items in the cart</h2>
+            
+                    <button type="button" onClick={() => router.push('/')} className="font-medium text-white bg-purple-600 px-3 py-1 border-none rounded-md shadow-md">
+                        Continue Shopping
+                    </button>
+   
+                </div>
+
+            )
         }
 
         return (
             <>
-                <div class=" z-10 h-screen bg-white flex flex-col lg:flex-row gap-4" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+                {cartProducts.length >=1 && <div className=" z-10 h-screen bg-white flex flex-col lg:flex-row gap-4" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
 
 
-                    <div class=" ">
-                        <div class=" inset-0 overflow-hidden">
-                            <div class="right-0 ">
+                    <div className=" ">
+                        <div className=" inset-0 overflow-hidden">
+                            <div className="right-0 ">
 
-                                <div class="pointer-events-auto w-[100%]">
-                                    <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                                        <div class="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
-                                            <div class="flex items-start justify-between">
-                                                <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Shopping cart</h2>
+                                <div className="pointer-events-auto w-[100%]">
+                                    <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                                        <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
+                                            <div className="flex items-start justify-between">
+                                                <h2 className="text-lg font-medium text-gray-900" id="slide-over-title">Shopping cart</h2>
 
                                             </div>
 
-                                            <div class="mt-8">
-                                                <div class="flow-root">
-                                                    <ul role="list" class="-my-6 divide-y divide-gray-200">
+                                            <div className="mt-8">
+                                                <div className="flow-root">
+                                                    <ul role="list" className="-my-6 divide-y divide-gray-200">
                                                         {cartProducts.map(item => (
 
-                                                            <li key={item._id} class="flex py-6">
-                                                                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                                                    <img src={item.product.mediaUrl} alt="" class="h-full w-full object-contain object-center" />
+                                                            <li key={item._id} className="flex py-6">
+                                                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                                    <img src={item.product.mediaUrl} alt="" className="h-full w-full object-contain object-center" />
                                                                 </div>
 
-                                                                <div class="ml-4 flex flex-1 flex-col">
+                                                                <div className="ml-4 flex flex-1 flex-col">
                                                                     <div>
-                                                                        <div class="flex justify-between text-base font-medium text-gray-900">
+                                                                        <div className="flex justify-between text-base font-medium text-gray-900">
                                                                             <h3>
                                                                                 <a href="#">{item.product.name}</a>
                                                                             </h3>
-                                                                            <p class="ml-4">${item.product.price}</p>
+                                                                            <p className="ml-4">${item.product.price}</p>
                                                                         </div>
 
                                                                     </div>
-                                                                    <div class="flex flex-1 items-end justify-between text-sm">
-                                                                        <p class="text-gray-500">quantity: {item.quantity}</p>
+                                                                    <div className="flex flex-1 items-end justify-between text-sm">
+                                                                        <p className="text-gray-500">quantity: {item.quantity}</p>
 
-                                                                        <div class="flex">
-                                                                            <button onClick={() => handleRemove(item.product._id)} type="button" class="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
+                                                                        <div className="flex">
+                                                                            <button onClick={() => handleRemove(item.product._id)} type="button" className="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -133,20 +165,32 @@ const Cart = ({ error, products }) => {
                         </div>
                     </div>
 
-                    <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
-                        <div class="flex justify-between text-base font-medium text-gray-900">
+                    <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
+                        <div className="flex justify-between text-base font-medium text-gray-900">
                             <p>Subtotal</p>
                             <p>${totalprice * totalqty}</p>
 
                         </div>
-                        <p class="mt-0.5 text-sm text-gray-500">The total amount depends on the quantity and price of the product you selected.</p>
-                        <div class="mt-6">
-                            <a href="#" class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Checkout</a>
+                        <p className="mt-0.5 text-sm text-gray-500">The total amount depends on the quantity and price of the product you selected.</p>
+                        <div className="mt-6">
+                            <StripeCheckout
+                                name="My Store"
+                                amount={totalprice * totalqty * 100}
+                                image={products[0]?.product.mediaUrl}
+                                currency="INR"
+                                shippingAddress={true}
+                                billingAddress={true}
+                                zipCode={true}
+                                stripeKey="pk_test_51LpXtpSElKHW7RKuEmMbUDMEac5UVQVbrGIY9dROnwbqMBavVkBX57mpE7hvVSB9UTVNkYyJRRipgTyGkbg2v2Mf00KETHIcXX"
+                                token={(paymentInfo) => handleCheckout(paymentInfo)}
+                            >
+                                <a href="#" className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Checkout</a>
+                            </StripeCheckout>
                         </div>
-                        <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
+                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                             <p>
                                 or
-                                <button type="button" onClick={() => router.push('/')} class="font-medium text-indigo-600 hover:text-indigo-500">
+                                <button type="button" onClick={() => router.push('/')} className="font-medium text-indigo-600 hover:text-indigo-500">
                                     Continue Shopping
                                     <span aria-hidden="true"> &rarr;</span>
                                 </button>
@@ -155,8 +199,8 @@ const Cart = ({ error, products }) => {
                     </div>
 
 
-                </div>
-
+                </div>}
+                
 
             </>
         )
@@ -172,26 +216,26 @@ const Cart = ({ error, products }) => {
 export async function getServerSideProps(ctx) {
 
     const { token } = parseCookies(ctx)
-   
+
     if (!token) {
         return {
             props: { products: [] }
         }
     }
     const res = await fetch(`${baseUrl}/api/cart`, {
-        method:"GET",
+        method: "GET",
         headers: {
             "token": token
         }
     })
     const products = await res.json()
-    
+
     if (products.error) {
         return {
             props: { error: products.error }
         }
     }
-    
+
 
     return {
         props: { products }

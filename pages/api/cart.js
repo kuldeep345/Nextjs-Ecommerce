@@ -1,6 +1,7 @@
-import jwt from 'jsonwebtoken'
+
 import Cart from '../../models/Cart'
 import initDB from '../../helpers/initDB'
+import isAuthenticated from '../../helpers/Authenticated'
 
 
 initDB()
@@ -20,27 +21,7 @@ export default async(req,res)=>{
                 
             }
             
- function isAuthenticated(icomponent){
-  
-    return (req,res)=>{
-        const {token} = req.headers
-        
-        if(!token){
-            return res.status(401).json({error:"You must be logged in "})
-        }
 
-        try{
-            const {userId} = jwt.verify(token , process.env.JWT_SECRET)
-            req.userId = userId
-            return icomponent(req,res)
-        }
-        catch(err){
-            res.status(401).json({error:"something went wrong! login again"})
-            console.log(err)
-        }
-
-    }
-}
 
 const fetchProducts = isAuthenticated(async(req,res)=>{
    

@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function MyApp({ Component, pageProps }) {
+  typeof window !== "undefined"
   return <>
     <ToastContainer
       position="top-right"
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }) {
    
     <Navbar />
     <Component {...pageProps} />
+
   </>
 }
 
