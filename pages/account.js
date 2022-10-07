@@ -1,26 +1,11 @@
 import React from 'react'
 import { parseCookies } from 'nookies'
 import baseUrl from '../helpers/baseUrl'
+import UserRoles from '../components/UserRoles'
 
 const Account = ({ order }) => {
 
-  const { token, name, email, role } = parseCookies()
-
-  const initialValue = 0;
-
-  const totalQuantity = order?.reduce(
-    (previousValue, currentValue) => previousValue + currentValue.quantity,
-    initialValue
-    );
-
-
-  const totalprice= order?.reduce(
-    (previousValue, currentValue) => previousValue + currentValue.product.price,
-    initialValue
-    );
-
-
-      const total = totalQuantity * totalprice
+  const { name, email , role } = parseCookies()
 
       if(order == null || undefined ){
         return (
@@ -30,19 +15,19 @@ const Account = ({ order }) => {
       }
 
   return (
-    <div className='container'>
+    <div className='container flex flex-col justify-center mx-auto pb-28'>
       <div className='text-center'>
-        <h4>{name}</h4>
-        <h4>{email}</h4>
+        <h4 className='text-3xl text-center font-bold tracking-[0.5rem] mt-3 text-gray-500 font-sans uppercase'>{name}</h4>
+        <h4 className='text-xl text-center font-semibold text-gray-500 font-sans'>{email}</h4>
       </div>
 
 
-      <div className=" ">
+      <div className=" bg-white mt-6 rounded-lg shadow-lg">
         <div className=" inset-0 overflow-hidden">
           <div className="right-0 ">
 
             <div className="pointer-events-auto w-[100%]">
-              <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+              <div className="flex h-full flex-col  bg-white shadow-xl">
                 <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
                   <div className="flex items-start justify-between">
                     <h2 className="text-lg font-medium text-gray-900" id="slide-over-title">Your Orders</h2>
@@ -93,8 +78,7 @@ const Account = ({ order }) => {
         </div>
       </div>
 
-      <h3 className='text-bold text-2xl px-4 py-4'>Total: ${total}</h3>
-
+      {role==='root' && <UserRoles/>}
     </div>
   )
 
